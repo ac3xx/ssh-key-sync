@@ -1,4 +1,4 @@
-module github.com/shoenig/ssh-key-sync
+module github.com/ac3xx/ssh-key-sync
 
 go 1.21
 
