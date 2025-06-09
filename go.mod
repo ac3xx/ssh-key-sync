@@ -19,4 +19,4 @@ require (
 	kernel.org/pub/linux/libs/security/libcap/psx v1.2.69 // indirect
 )
 
-replace github.com/shoenig/ssh-key-sync => github.com/ac3xx/ssh-key-sync v0.0.0-20250609114122-3064139ccbea
+replace github.com/shoenig/ssh-key-sync => github.com/ac3xx/ssh-key-sync latest
