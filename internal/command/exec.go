@@ -5,6 +5,7 @@ import (
 	"log"
 	"path/filepath"
 	"runtime"
+ "os/user"
 	"sort"
 
 	"github.com/hashicorp/go-set/v2"
@@ -45,16 +46,24 @@ type exec struct {
 	writeKeyFile func(filename, content string) error
 }
 
+func GetHomeDir(username string) (string, error) {
+	usr, err := user.Lookup(username)
+	if err != nil {
+		return "", err
+	}
+	return usr.HomeDir, nil
+}
+
 func (e *exec) Execute(args config.Arguments) error {
+ homeDir, err := GetHomeDir(args.SystemUser)
+ if err != nil {
+  return err
+ }
+
 	switch args.AuthorizedKeys {
 	case "":
-		// check if mac or linux and use different location
-		if runtime.GOOS == "darwin" {
-			args.AuthorizedKeys = filepath.Join("/Users", args.SystemUser, ".ssh", "authorized_keys")
-		} else {
-			args.AuthorizedKeys = filepath.Join("/home", args.SystemUser, ".ssh", "authorized_keys")
-			e.logger.Printf("using default output authorized_keys file (%s)", args.AuthorizedKeys)
-		}
+  args.AuthorizedKeys = filepath.Join(homeDir, ".ssh", "authorized_keys")
+		e.logger.Printf("using default output authorized_keys file (%s)", args.AuthorizedKeys)
 
 	default:
 		e.logger.Printf("using configured output authorized_keys file (%s)", args.AuthorizedKeys)
